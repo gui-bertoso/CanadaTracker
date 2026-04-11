@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Canada Tracker
+Comment=Personal dashboard for the Canada project
+Exec=/home/patolizo/Documents/GitHub/CanadaTracker/scripts/run_canada_tracker.sh
+Path=/home/patolizo/Documents/GitHub/CanadaTracker
+Terminal=false
+X-GNOME-Autostart-enabled=true
+Categories=Utility;
