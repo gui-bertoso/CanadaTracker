@@ -1,25 +1,24 @@
 # Canada Tracker
 
-App desktop pessoal em Python/PySide6 para acompanhar lucros, ingles, habitos, progresso geral e conquistas do seu Canada Project.
+A personal Python/PySide6 desktop app for tracking earnings, English practice,
+habits, overall progress and achievements for your Canada Project.
 
 ## Stack
 
-- Python 3.11+
-- PySide6
-- SQLite
+Python 3.11+, PySide6 and SQLite.
 
-## Estrutura
+## Structure
 
-- `main.py`: entrada do app
-- `canada_tracker/config.py`: defaults e caminhos
-- `canada_tracker/database.py`: inicializacao do SQLite
-- `canada_tracker/services/`: regras de negocio, score diario e conquistas
-- `canada_tracker/ui/`: janela principal, abas, widgets, estilo dark
-- `scripts/run_canada_tracker.sh`: launcher com caminho absoluto
-- `scripts/install_autostart.sh`: instala o autostart padrao do Linux
-- `scripts/canada-tracker.desktop`: arquivo `.desktop`
+- `main.py`: application entry point.
+- `canada_tracker/config.py`: defaults and paths.
+- `canada_tracker/database.py`: SQLite initialization.
+- `canada_tracker/services/`: business rules, daily scores and achievements.
+- `canada_tracker/ui/`: main window, tabs, widgets and dark theme.
+- `scripts/run_canada_tracker.sh`: launcher with an absolute path.
+- `scripts/install_autostart.sh`: Linux autostart installer.
+- `scripts/canada-tracker.desktop`: desktop entry.
 
-## Como rodar
+## Run
 
 ```bash
 python3 -m venv .venv
@@ -30,13 +29,13 @@ python main.py
 
 ## Autostart
 
-Instalar:
+Install:
 
 ```bash
 sh scripts/install_autostart.sh
 ```
 
-Desativar:
+Disable:
 
 ```bash
 rm -f ~/.config/autostart/canada-tracker.desktop

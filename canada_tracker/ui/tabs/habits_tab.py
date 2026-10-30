@@ -27,14 +27,14 @@ from canada_tracker.ui.widgets.charts import bar_chart
 
 class HabitsTab(QWidget):
     BOOLEAN_FIELDS = [
-        ("water", "Agua"),
-        ("ate_well", "Alimentacao"),
-        ("trained", "Treino"),
-        ("studied_english", "Ingles"),
-        ("worked_progress", "Trabalho"),
-        ("slept_well", "Sono"),
+        ("water", 'Water'),
+        ("ate_well", 'Food'),
+        ("trained", 'Training'),
+        ("studied_english", 'English'),
+        ("worked_progress", 'Work'),
+        ("slept_well", 'Sleep'),
         ("cardio", "Cardio"),
-        ("mobility", "Hand Grip / Mobilidade"),
+        ("mobility", "Hand grip / mobility"),
     ]
 
     def __init__(self, on_save, on_date_selected, compact: bool = False) -> None:
@@ -46,15 +46,15 @@ class HabitsTab(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(12 if compact else 16, 12 if compact else 16, 12 if compact else 16, 12 if compact else 16)
         layout.setSpacing(10 if compact else 16)
-        title = QLabel("dia" if compact else "Registro Diario / Saude / Habitos")
+        title = QLabel('day' if compact else "Daily log / health / habits")
         title.setProperty("section" if compact else "title", True)
         layout.addWidget(title)
 
         cards_row = QHBoxLayout()
-        self.score_card = MetricCard("Score do Dia", "0%")
-        self.completed_card = MetricCard("Habitos Feitos", "0")
-        self.streak_card = MetricCard("Streak de Dias Bons", "0")
-        self.week_card = MetricCard("Media Semanal", "0%")
+        self.score_card = MetricCard('Daily Score', "0%")
+        self.completed_card = MetricCard('Completed Habits', "0")
+        self.streak_card = MetricCard('Good-Day Streak', "0")
+        self.week_card = MetricCard('Weekly Average', "0%")
         cards_row.addWidget(self.score_card)
         cards_row.addWidget(self.completed_card)
         cards_row.addWidget(self.streak_card)
@@ -66,16 +66,16 @@ class HabitsTab(QWidget):
         layout.addLayout(cards_row)
 
         content_row = QHBoxLayout()
-        form_widget = SectionCard("Check-in Diario", "Marque o que foi feito e salve o dia.")
+        form_widget = SectionCard('Daily Check-in', 'Check off completed activities and save the day.')
         form_layout = form_widget.layout
         date_row = QHBoxLayout()
         self.log_date = QDateEdit()
         self.log_date.setCalendarPopup(True)
         self.log_date.setDate(QDate.currentDate())
-        load_button = QPushButton("Carregar dia")
+        load_button = QPushButton('Load day')
         load_button.setProperty("secondary", True)
         load_button.clicked.connect(self._load_current_date)
-        date_row.addWidget(QLabel("Data"))
+        date_row.addWidget(QLabel('Date'))
         date_row.addWidget(self.log_date)
         date_row.addWidget(load_button)
         form_layout.addLayout(date_row)
@@ -95,30 +95,30 @@ class HabitsTab(QWidget):
         self.weight.setDecimals(1)
         self.note = QTextEdit()
         self.note.setFixedHeight(70)
-        extras.addRow("Humor / Energia", self.mood)
-        extras.addRow("Peso", self.weight)
-        extras.addRow("Observacao", self.note)
+        extras.addRow("Mood / energy", self.mood)
+        extras.addRow('Weight', self.weight)
+        extras.addRow('Note', self.note)
         form_layout.addLayout(extras)
-        save_button = QPushButton("Salvar registro")
+        save_button = QPushButton('Save record')
         save_button.clicked.connect(self._handle_save)
         form_layout.addWidget(save_button)
-        self.selected_day_badge = QLabel("Sem registro")
+        self.selected_day_badge = QLabel('No record')
         self.selected_day_badge.setProperty("pill", "low")
         form_layout.addWidget(self.selected_day_badge)
         content_row.addWidget(form_widget, 2)
 
         right_column = QVBoxLayout()
-        calendar_card = SectionCard("Calendario de Progresso", "Verde = forte, amarelo = medio, vermelho = fraco.")
+        calendar_card = SectionCard('Progress Calendar', "Verde = forte, amarelo = medio, vermelho = fraco.")
         self.calendar = ProgressCalendar()
         self.calendar.selectionChanged.connect(self._calendar_changed)
         calendar_card.layout.addWidget(self.calendar)
         right_column.addWidget(calendar_card)
-        self.habit_chart_card = SectionCard("Resumo Semanal de Habitos")
+        self.habit_chart_card = SectionCard('Weekly Habit Summary')
         self.habit_chart_layout = QVBoxLayout()
         self.habit_chart_card.layout.addLayout(self.habit_chart_layout)
         right_column.addWidget(self.habit_chart_card)
         self.summary_table = QTableWidget(0, 4)
-        self.summary_table.setHorizontalHeaderLabels(["Data", "Score", "Class.", "Habitos"])
+        self.summary_table.setHorizontalHeaderLabels(['Date', "Score", 'Rating', 'Habits'])
         self.summary_table.horizontalHeader().setStretchLastSection(True)
         self.summary_table.setAlternatingRowColors(True)
         self.summary_table.setMaximumHeight(180 if compact else 260)
@@ -150,19 +150,19 @@ class HabitsTab(QWidget):
         for field in self.checkboxes:
             payload[field] = int(self.checkboxes[field].isChecked())
         self.on_save(payload)
-        QMessageBox.information(self, "Registro salvo", "O registro diario foi salvo.")
+        QMessageBox.information(self, 'Record saved', 'The daily record was saved.')
 
     def refresh(self, metrics: dict[str, object], calendar_scores: dict[str, dict[str, object]], selected_log: dict[str, object] | None) -> None:
         reference = selected_log or metrics["today_log"] or (metrics["recent_logs"][0] if metrics["recent_logs"] else None)
-        self.score_card.update_content("Score do Dia", f"{(reference or {}).get('score', 0)}%", "Data selecionada")
-        self.completed_card.update_content("Habitos Feitos", str((reference or {}).get("completed_habits", 0)), "Data selecionada")
-        self.streak_card.update_content("Streak de Dias Bons", str(metrics["good_day_streak"]), "Dias seguidos")
-        self.week_card.update_content("Media Semanal", f"{metrics['average_daily_score']:.1f}%", f"Conclusao {metrics['weekly_completion_rate']:.1f}%")
+        self.score_card.update_content('Daily Score', f"{(reference or {}).get('score', 0)}%", 'Selected date')
+        self.completed_card.update_content('Completed Habits', str((reference or {}).get("completed_habits", 0)), 'Selected date')
+        self.streak_card.update_content('Good-Day Streak', str(metrics["good_day_streak"]), 'Consecutive days')
+        self.week_card.update_content('Weekly Average', f"{metrics['average_daily_score']:.1f}%", f"Completion {metrics['weekly_completion_rate']:.1f}%")
         self.calendar.apply_scores(calendar_scores)
         self.load_log(selected_log)
         classification = (reference or {}).get("classification", "low")
         self.selected_day_badge.setText(
-            "Dia forte" if classification == "good" else "Dia medio" if classification == "mid" else "Dia fraco ou vazio"
+            'Strong day' if classification == "good" else 'Average day' if classification == "mid" else 'Low or empty day'
         )
         self.selected_day_badge.setProperty("pill", classification)
         self.selected_day_badge.style().unpolish(self.selected_day_badge)
@@ -179,7 +179,7 @@ class HabitsTab(QWidget):
             widget = item.widget()
             if widget:
                 widget.deleteLater()
-        labels = ["Agua", "Food", "Treino", "Ingles", "Trabalho", "Sono", "Cardio", "Mob."]
+        labels = ['Water', "Food", 'Training', 'English', 'Work', 'Sleep', "Cardio", "Mob."]
         ordered_fields = ["water", "ate_well", "trained", "studied_english", "worked_progress", "slept_well", "cardio", "mobility"]
         values = [float(metrics["weekly_habit_totals"].get(field, 0)) for field in ordered_fields]
-        self.habit_chart_layout.addWidget(bar_chart(labels, values, "Habitos Marcados na Semana", "#91f2b5", 180 if self.compact else 240))
+        self.habit_chart_layout.addWidget(bar_chart(labels, values, 'Weekly Habit Check-ins', "#91f2b5", 180 if self.compact else 240))

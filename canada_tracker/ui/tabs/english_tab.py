@@ -29,7 +29,7 @@ class EnglishTab(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(12 if compact else 16, 12 if compact else 16, 12 if compact else 16, 12 if compact else 16)
         layout.setSpacing(10 if compact else 16)
-        title = QLabel("ingles" if compact else "Ingles")
+        title = QLabel('English' if compact else 'English')
         title.setProperty("section" if compact else "title", True)
         layout.addWidget(title)
         self.summary = QLabel()
@@ -38,10 +38,10 @@ class EnglishTab(QWidget):
         layout.addWidget(self.summary)
 
         cards_row = QHBoxLayout()
-        self.total_card = MetricCard("Tempo Total", "0h")
-        self.days_card = MetricCard("Dias Estudados", "0")
+        self.total_card = MetricCard('Total time', "0h")
+        self.days_card = MetricCard('Study Days', "0")
         self.streak_card = MetricCard("Streak", "0")
-        self.goal_card = MetricCard("Meta", "0%")
+        self.goal_card = MetricCard('Goal', "0%")
         cards_row.addWidget(self.total_card)
         cards_row.addWidget(self.days_card)
         cards_row.addWidget(self.streak_card)
@@ -53,7 +53,7 @@ class EnglishTab(QWidget):
         layout.addLayout(cards_row)
 
         form_layout = QHBoxLayout()
-        form_box = SectionCard("Nova Sessao", "Registre tipo de estudo, duracao e mantenha a consistencia visivel.")
+        form_box = SectionCard('New Session', 'Record study type and duration to keep your consistency visible.')
         form = QFormLayout()
         self.minutes = QSpinBox()
         self.minutes.setMaximum(1440)
@@ -63,23 +63,23 @@ class EnglishTab(QWidget):
         self.session_date.setDate(QDate.currentDate())
         self.note = QTextEdit()
         self.note.setFixedHeight(70)
-        save_button = QPushButton("Salvar sessao")
+        save_button = QPushButton('Save session')
         save_button.clicked.connect(self._handle_save)
-        form.addRow("Minutos", self.minutes)
-        form.addRow("Tipo", self.study_type)
-        form.addRow("Data", self.session_date)
-        form.addRow("Observacao", self.note)
+        form.addRow('Minutes', self.minutes)
+        form.addRow('Type', self.study_type)
+        form.addRow('Date', self.session_date)
+        form.addRow('Note', self.note)
         form.addRow("", save_button)
         form_box.layout.addLayout(form)
         form_layout.addWidget(form_box, 1)
-        self.chart_card = SectionCard("Progresso de Ingles")
+        self.chart_card = SectionCard('English Progress')
         self.chart_container = QVBoxLayout()
         self.chart_card.layout.addLayout(self.chart_container)
         form_layout.addWidget(self.chart_card, 2)
         layout.addLayout(form_layout)
 
         self.table = QTableWidget(0, 4)
-        self.table.setHorizontalHeaderLabels(["Data", "Tipo", "Minutos", "Observacao"])
+        self.table.setHorizontalHeaderLabels(['Date', 'Type', 'Minutes', 'Note'])
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setAlternatingRowColors(True)
         self.table.setMaximumHeight(180 if compact else 260)
@@ -87,7 +87,7 @@ class EnglishTab(QWidget):
 
     def _handle_save(self) -> None:
         if not self.study_type.text().strip():
-            QMessageBox.warning(self, "Validacao", "Informe o tipo de estudo.")
+            QMessageBox.warning(self, 'Validation', 'Enter the study type.')
             return
         self.on_save(
             self.minutes.value(),
@@ -101,13 +101,13 @@ class EnglishTab(QWidget):
 
     def refresh(self, sessions: list[dict[str, object]], metrics: dict[str, object]) -> None:
         goal_pct = metrics["english_minutes"] / max(int(metrics["settings"]["english_goal_minutes"]), 1) * 100
-        self.total_card.update_content("Tempo Total", f"{metrics['english_hours']:.1f}h", f"{metrics['english_minutes']} min")
-        self.days_card.update_content("Dias Estudados", str(metrics["english_days"]), "Dias unicos")
-        self.streak_card.update_content("Streak", str(metrics["english_streak"]), "Dias seguidos")
-        self.goal_card.update_content("Meta", f"{goal_pct:.1f}%", f"Meta {int(metrics['settings']['english_goal_minutes'])} min")
+        self.total_card.update_content('Total time', f"{metrics['english_hours']:.1f}h", f"{metrics['english_minutes']} min")
+        self.days_card.update_content('Study Days', str(metrics["english_days"]), 'Unique days')
+        self.streak_card.update_content("Streak", str(metrics["english_streak"]), 'Consecutive days')
+        self.goal_card.update_content('Goal', f"{goal_pct:.1f}%", f"Goal {int(metrics['settings']['english_goal_minutes'])} min")
         self.summary.setText(
-            f"Ritmo atual: {metrics['english_days']} dias estudados e streak de {metrics['english_streak']} dias. "
-            f"Faltam {max(int(metrics['settings']['english_goal_minutes']) - metrics['english_minutes'], 0)} minutos para a meta."
+            f"Current pace: {metrics['english_days']} study days and a streak of {metrics['english_streak']} days. "
+            f"Remaining: {max(int(metrics['settings']['english_goal_minutes']) - metrics['english_minutes'], 0)} minutes toward the goal."
         )
         self.table.setRowCount(len(sessions))
         for row_index, entry in enumerate(sessions):
@@ -120,4 +120,4 @@ class EnglishTab(QWidget):
             if item.widget():
                 item.widget().deleteLater()
         points = [(entry["session_date"], float(entry["duration_minutes"])) for entry in reversed(sessions[:12])]
-        self.chart_container.addWidget(line_chart(points or [("2000-01-01", 0)], "Progresso de Ingles", "#91f2b5", 200 if self.compact else 240))
+        self.chart_container.addWidget(line_chart(points or [("2000-01-01", 0)], 'English Progress', "#91f2b5", 200 if self.compact else 240))

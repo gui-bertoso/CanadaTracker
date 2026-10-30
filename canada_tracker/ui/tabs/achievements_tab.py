@@ -9,14 +9,14 @@ from canada_tracker.ui.widgets.cards import MetricCard, SectionCard
 
 
 CATEGORY_STYLES = {
-    "Lucros": ("LC", "#63d1ff", "#132638"),
-    "Ingles": ("EN", "#88f0b3", "#153025"),
-    "Consistencia": ("CS", "#ffd166", "#372b14"),
-    "Habitos": ("HB", "#ff9f6e", "#352018"),
-    "Disciplina": ("DS", "#d29cff", "#2d1938"),
-    "Uso do App": ("AP", "#9fb5ff", "#1b2340"),
-    "Metas": ("MT", "#ff86a8", "#371725"),
-    "Marcos Gerais": ("MG", "#d8e2ee", "#202833"),
+    'Earnings': ("LC", "#63d1ff", "#132638"),
+    'English': ("EN", "#88f0b3", "#153025"),
+    'Consistency': ("CS", "#ffd166", "#372b14"),
+    'Habits': ("HB", "#ff9f6e", "#352018"),
+    'Discipline': ("DS", "#d29cff", "#2d1938"),
+    'App Usage': ("AP", "#9fb5ff", "#1b2340"),
+    'Goals': ("MT", "#ff86a8", "#371725"),
+    'General Milestones': ("MG", "#d8e2ee", "#202833"),
 }
 
 
@@ -85,20 +85,20 @@ class AchievementBadge(QFrame):
         self.name.setText(str(achievement["name"]))
         self.category.setText(category)
         self.description.setText(str(achievement["description"]))
-        self.status.setText("desbloqueada" if unlocked else "em progresso")
+        self.status.setText('unlocked' if unlocked else 'in progress')
         self.status.setStyleSheet(
             "background: #163624; color: #6de49a; border-radius: 8px; padding: 3px 8px; font-weight: 700;"
             if unlocked
             else "background: #202833; color: #d4b366; border-radius: 8px; padding: 3px 8px; font-weight: 700;"
         )
-        self.date.setText(str(achievement["unlocked_at"][:10]) if achievement["unlocked_at"] else "sem data")
+        self.date.setText(str(achievement["unlocked_at"][:10]) if achievement["unlocked_at"] else 'no date')
         if unlocked:
-            self.progress_text.setText("trofeu garantido")
+            self.progress_text.setText('trophy secured')
             self.progress_bar.setValue(100)
         else:
             current_value = achievement["current_value"]
             threshold = achievement["threshold"]
-            self.progress_text.setText(f"falta pouco: {self._format_metric(current_value)}/{self._format_metric(threshold)}")
+            self.progress_text.setText(f"almost there: {self._format_metric(current_value)}/{self._format_metric(threshold)}")
             self.progress_bar.setValue(int(achievement["progress_percent"]))
         self.setStyleSheet(
             "QFrame[achievementCard=\"true\"] {"
@@ -130,9 +130,9 @@ class AchievementsTab(QWidget):
         layout.addWidget(title)
 
         cards_row = QHBoxLayout()
-        self.total_card = MetricCard("Desbloqueadas", "0")
-        self.locked_card = MetricCard("Bloqueadas", "0")
-        self.progress_card = MetricCard("Progresso", "0%")
+        self.total_card = MetricCard('Unlocked', "0")
+        self.locked_card = MetricCard('Locked', "0")
+        self.progress_card = MetricCard('Progress', "0%")
         cards_row.addWidget(self.total_card)
         cards_row.addWidget(self.locked_card)
         cards_row.addWidget(self.progress_card)
@@ -145,12 +145,12 @@ class AchievementsTab(QWidget):
 
         filters = QHBoxLayout()
         self.search = QLineEdit()
-        self.search.setPlaceholderText("Buscar achievement...")
+        self.search.setPlaceholderText('Search achievements...')
         self.search.textChanged.connect(self._apply_filters)
         self.category_filter = QComboBox()
         self.category_filter.currentTextChanged.connect(self._apply_filters)
         self.status_filter = QComboBox()
-        self.status_filter.addItems(["Todas", "Desbloqueadas", "Bloqueadas"])
+        self.status_filter.addItems(['All', 'Unlocked', 'Locked'])
         self.status_filter.currentTextChanged.connect(self._apply_filters)
         filters.addWidget(self.search, 2)
         filters.addWidget(self.category_filter, 1)
@@ -163,19 +163,19 @@ class AchievementsTab(QWidget):
         left = QVBoxLayout()
         self.highlight_card = SectionCard("destaque")
         self.highlight_card.layout.setSpacing(10)
-        self.highlight_title = QLabel("nenhuma conquista ainda")
+        self.highlight_title = QLabel('no achievements yet')
         self.highlight_title.setProperty("section", True)
-        self.highlight_desc = QLabel("continue registrando seus dados para desbloquear a primeira badge.")
+        self.highlight_desc = QLabel('keep recording your data to unlock your first badge.')
         self.highlight_desc.setWordWrap(True)
         self.highlight_desc.setProperty("muted", True)
         self.highlight_card.layout.addWidget(self.highlight_title)
         self.highlight_card.layout.addWidget(self.highlight_desc)
         left.addWidget(self.highlight_card)
 
-        self.next_card = SectionCard("proxima conquista")
-        self.next_title = QLabel("sem alvo")
+        self.next_card = SectionCard('next achievement')
+        self.next_title = QLabel('no target')
         self.next_title.setProperty("section", True)
-        self.next_desc = QLabel("registre dados para surgir uma meta aqui.")
+        self.next_desc = QLabel('record data to see a goal here.')
         self.next_desc.setWordWrap(True)
         self.next_desc.setProperty("muted", True)
         self.next_card.layout.addWidget(self.next_title)
@@ -205,15 +205,15 @@ class AchievementsTab(QWidget):
         self._all_achievements = achievements
         unlocked = [item for item in achievements if item["unlocked"]]
         counts = Counter(item["category"] for item in unlocked)
-        parts = ", ".join(f"{category}: {total}" for category, total in sorted(counts.items())) or "Nenhuma ainda"
-        self.summary.setText(f"{len(unlocked)} de {len(achievements)} achievements desbloqueadas. Categorias: {parts}.")
-        self.total_card.update_content("Desbloqueadas", str(len(unlocked)))
-        self.locked_card.update_content("Bloqueadas", str(len(achievements) - len(unlocked)))
-        self.progress_card.update_content("Progresso", f"{(len(unlocked) / max(len(achievements), 1) * 100):.1f}%")
+        parts = ", ".join(f"{category}: {total}" for category, total in sorted(counts.items())) or 'None yet'
+        self.summary.setText(f"{len(unlocked)} of {len(achievements)} achievements unlocked. Categories: {parts}.")
+        self.total_card.update_content('Unlocked', str(len(unlocked)))
+        self.locked_card.update_content('Locked', str(len(achievements) - len(unlocked)))
+        self.progress_card.update_content('Progress', f"{(len(unlocked) / max(len(achievements), 1) * 100):.1f}%")
         categories = sorted({item["category"] for item in achievements})
         self.category_filter.blockSignals(True)
         self.category_filter.clear()
-        self.category_filter.addItems(["Todas", *categories])
+        self.category_filter.addItems(['All', *categories])
         self.category_filter.blockSignals(False)
         self._refresh_highlight(unlocked)
         self._refresh_next_target(achievements)
@@ -221,15 +221,15 @@ class AchievementsTab(QWidget):
 
     def _apply_filters(self) -> None:
         status = self.status_filter.currentText()
-        category = self.category_filter.currentText() if self.category_filter.count() else "Todas"
+        category = self.category_filter.currentText() if self.category_filter.count() else 'All'
         term = self.search.text().strip().lower()
         filtered = []
         for item in self._all_achievements:
-            if category != "Todas" and item["category"] != category:
+            if category != 'All' and item["category"] != category:
                 continue
-            if status == "Desbloqueadas" and not item["unlocked"]:
+            if status == 'Unlocked' and not item["unlocked"]:
                 continue
-            if status == "Bloqueadas" and item["unlocked"]:
+            if status == 'Locked' and item["unlocked"]:
                 continue
             haystack = f"{item['name']} {item['description']} {item['category']}".lower()
             if term and term not in haystack:
@@ -253,20 +253,20 @@ class AchievementsTab(QWidget):
 
     def _refresh_highlight(self, unlocked: list[dict[str, object]]) -> None:
         if not unlocked:
-            self.highlight_title.setText("nenhuma conquista ainda")
-            self.highlight_desc.setText("continue registrando seus dados para desbloquear a primeira badge.")
+            self.highlight_title.setText('no achievements yet')
+            self.highlight_desc.setText('keep recording your data to unlock your first badge.')
             return
         latest = sorted(unlocked, key=lambda item: item["unlocked_at"], reverse=True)[0]
         self.highlight_title.setText(str(latest["name"]))
         self.highlight_desc.setText(
-            f"{latest['description']}\n\ncategoria: {latest['category']}\ndesbloqueada em: {latest['unlocked_at'][:10]}"
+            f"{latest['description']}\n\ncategory: {latest['category']}\nunlocked on: {latest['unlocked_at'][:10]}"
         )
 
     def _refresh_next_target(self, achievements: list[dict[str, object]]) -> None:
         locked = [item for item in achievements if not item["unlocked"]]
         if not locked:
-            self.next_title.setText("tudo limpo")
-            self.next_desc.setText("todas as conquistas atuais foram desbloqueadas.")
+            self.next_title.setText('all clear')
+            self.next_desc.setText('all current achievements have been unlocked.')
             self.next_progress.setValue(100)
             return
         target = max(locked, key=lambda item: (item["progress_percent"], -float(item["threshold"])))
@@ -280,17 +280,17 @@ class AchievementsTab(QWidget):
     @staticmethod
     def _remaining_text(metric: str, remaining: float) -> str:
         labels = {
-            "profit_total": "faltam R$ {value}",
-            "profit_entries": "faltam {value} entradas",
-            "english_minutes": "faltam {value} min",
-            "english_days": "faltam {value} dias",
-            "good_day_streak": "faltam {value} dias bons seguidos",
-            "good_days": "faltam {value} dias verdes",
-            "perfect_days": "faltam {value} dias perfeitos",
-            "app_launches": "faltam {value} aberturas do app",
-            "goal_progress": "faltam {value}% de progresso",
-            "logs_count": "faltam {value} registros",
+            "profit_total": "R$ {value} remaining",
+            "profit_entries": "{value} entries remaining",
+            "english_minutes": "{value} minutes remaining",
+            "english_days": "{value} days remaining",
+            "good_day_streak": "{value} consecutive good days remaining",
+            "good_days": "{value} green days remaining",
+            "perfect_days": "{value} perfect days remaining",
+            "app_launches": "{value} app launches remaining",
+            "goal_progress": "{value}% progress remaining",
+            "logs_count": "{value} logs remaining",
         }
         value = AchievementBadge._format_metric(remaining)
-        template = labels.get(metric, "faltam {value}")
+        template = labels.get(metric, "{value} remaining")
         return template.format(value=value)

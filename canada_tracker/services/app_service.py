@@ -261,7 +261,7 @@ class AppService:
             activity.append(
                 {
                     "date": row["entry_date"],
-                    "type": "Lucro",
+                    "type": 'Earnings',
                     "title": row["source"],
                     "detail": f"R$ {float(row['amount']):.2f}",
                 }
@@ -270,7 +270,7 @@ class AppService:
             activity.append(
                 {
                     "date": row["session_date"],
-                    "type": "Ingles",
+                    "type": 'English',
                     "title": row["study_type"],
                     "detail": f"{int(row['duration_minutes'])} min",
                 }
@@ -279,9 +279,9 @@ class AppService:
             activity.append(
                 {
                     "date": row["log_date"],
-                    "type": "Dia",
+                    "type": 'Day',
                     "title": row["classification"],
-                    "detail": f"Score {int(row['score'])}% / {int(row['completed_habits'])} habitos",
+                    "detail": f"Score {int(row['score'])}% / {int(row['completed_habits'])} habits",
                 }
             )
         return sorted(activity, key=lambda item: item["date"], reverse=True)[:10]

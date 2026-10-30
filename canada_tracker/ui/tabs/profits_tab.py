@@ -32,7 +32,7 @@ class ProfitsTab(QWidget):
         layout.setContentsMargins(12 if compact else 16, 12 if compact else 16, 12 if compact else 16, 12 if compact else 16)
         layout.setSpacing(10 if compact else 16)
 
-        title = QLabel("lucros" if compact else "Lucros")
+        title = QLabel('earnings' if compact else 'Earnings')
         title.setProperty("section" if compact else "title", True)
         layout.addWidget(title)
         self.summary = QLabel()
@@ -42,9 +42,9 @@ class ProfitsTab(QWidget):
 
         cards_row = QHBoxLayout()
         self.total_card = MetricCard("Total", "R$ 0")
-        self.count_card = MetricCard("Entradas", "0")
-        self.goal_card = MetricCard("Meta", "0%")
-        self.average_card = MetricCard("Media", "R$ 0")
+        self.count_card = MetricCard('Entries', "0")
+        self.goal_card = MetricCard('Goal', "0%")
+        self.average_card = MetricCard('Average', "R$ 0")
         cards_row.addWidget(self.total_card)
         cards_row.addWidget(self.count_card)
         cards_row.addWidget(self.goal_card)
@@ -56,7 +56,7 @@ class ProfitsTab(QWidget):
         layout.addLayout(cards_row)
 
         form_layout = QHBoxLayout()
-        form_box = SectionCard("Nova Entrada", "Registre qualquer valor recebido e acompanhe a curva de crescimento.")
+        form_box = SectionCard('New Entry', 'Record any income and follow the growth curve.')
         form = QFormLayout()
         self.amount = QDoubleSpinBox()
         self.amount.setMaximum(1_000_000)
@@ -68,23 +68,23 @@ class ProfitsTab(QWidget):
         self.entry_date.setDate(QDate.currentDate())
         self.note = QTextEdit()
         self.note.setFixedHeight(70)
-        save_button = QPushButton("Salvar entrada")
+        save_button = QPushButton('Save entry')
         save_button.clicked.connect(self._handle_save)
-        form.addRow("Valor", self.amount)
-        form.addRow("Fonte", self.source)
-        form.addRow("Data", self.entry_date)
-        form.addRow("Observacao", self.note)
+        form.addRow('Amount', self.amount)
+        form.addRow('Source', self.source)
+        form.addRow('Date', self.entry_date)
+        form.addRow('Note', self.note)
         form.addRow("", save_button)
         form_box.layout.addLayout(form)
         form_layout.addWidget(form_box, 1)
-        self.chart_card = SectionCard("Evolucao dos Lucros")
+        self.chart_card = SectionCard('Earnings Growth')
         self.chart_container = QVBoxLayout()
         self.chart_card.layout.addLayout(self.chart_container)
         form_layout.addWidget(self.chart_card, 2)
         layout.addLayout(form_layout)
 
         self.table = QTableWidget(0, 4)
-        self.table.setHorizontalHeaderLabels(["Data", "Fonte", "Valor", "Observacao"])
+        self.table.setHorizontalHeaderLabels(['Date', 'Source', 'Amount', 'Note'])
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setAlternatingRowColors(True)
         self.table.setMaximumHeight(180 if compact else 260)
@@ -92,7 +92,7 @@ class ProfitsTab(QWidget):
 
     def _handle_save(self) -> None:
         if not self.source.text().strip():
-            QMessageBox.warning(self, "Validacao", "Informe a fonte da entrada.")
+            QMessageBox.warning(self, 'Validation', 'Enter an income source.')
             return
         self.on_save(
             self.amount.value(),
@@ -107,13 +107,13 @@ class ProfitsTab(QWidget):
     def refresh(self, entries: list[dict[str, object]], metrics: dict[str, object]) -> None:
         settings = metrics["settings"]
         average = metrics["profit_total"] / max(metrics["profit_entries"], 1)
-        self.total_card.update_content("Total", f"R$ {metrics['profit_total']:.2f}", "Acumulado")
-        self.count_card.update_content("Entradas", str(metrics["profit_entries"]), "Quantidade")
-        self.goal_card.update_content("Meta", f"{metrics['financial_progress']:.1f}%", f"Meta R$ {float(settings['financial_goal']):.0f}")
-        self.average_card.update_content("Media", f"R$ {average:.2f}", "Por entrada")
+        self.total_card.update_content("Total", f"R$ {metrics['profit_total']:.2f}", 'Accumulated')
+        self.count_card.update_content('Entries', str(metrics["profit_entries"]), "Quantidade")
+        self.goal_card.update_content('Goal', f"{metrics['financial_progress']:.1f}%", f"Goal R$ {float(settings['financial_goal']):.0f}")
+        self.average_card.update_content('Average', f"R$ {average:.2f}", 'Per entry')
         self.summary.setText(
-            f"Faltam R$ {max(float(settings['financial_goal']) - metrics['profit_total'], 0):.2f} para a meta principal. "
-            f"O ritmo atual soma {metrics['profit_entries']} entradas registradas."
+            f"Remaining: R$ {max(float(settings['financial_goal']) - metrics['profit_total'], 0):.2f} to reach the main goal. "
+            f"The current activity includes {metrics['profit_entries']} entries recorded."
         )
         self.table.setRowCount(len(entries))
         for row_index, entry in enumerate(entries):
@@ -144,10 +144,10 @@ class ProfitsTab(QWidget):
             target_points.append((label, (goal / len(labels)) * index if goal else 0.0))
         return multi_line_chart(
             [
-                {"name": "lucro real", "color": "#63d1ff", "points": real_points},
-                {"name": "meta ideal", "color": "#f0d020", "points": target_points, "style": "dashed"},
+                {"name": 'actual earnings', "color": "#63d1ff", "points": real_points},
+                {"name": 'ideal goal', "color": "#f0d020", "points": target_points, "style": "dashed"},
             ],
-            "Evolucao dos Lucros",
+            'Earnings Growth',
             height=200 if self.compact else 260,
             y_max=max(goal, max((value for _, value in real_points), default=0.0), 10),
         )

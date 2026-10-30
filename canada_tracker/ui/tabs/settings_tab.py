@@ -36,7 +36,7 @@ class SettingsTab(QWidget):
         layout = QVBoxLayout(content)
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(16)
-        title = QLabel("Configuracoes")
+        title = QLabel('Settings')
         title.setProperty("title", True)
         layout.addWidget(title)
 
@@ -46,28 +46,28 @@ class SettingsTab(QWidget):
         layout.addWidget(self.summary_label)
 
         numeric_fields = {
-            "financial_goal": ("Meta financeira", QDoubleSpinBox(), 1_000_000),
-            "english_goal_minutes": ("Meta de ingles (min)", QSpinBox(), 100_000),
-            "daily_water_goal": ("Meta diaria de agua", QSpinBox(), 100),
-            "daily_training_goal": ("Meta diaria de treino", QSpinBox(), 100),
-            "daily_food_goal": ("Meta diaria de alimentacao", QSpinBox(), 100),
-            "daily_sleep_goal": ("Meta diaria de sono", QSpinBox(), 100),
-            "daily_work_goal": ("Meta diaria de trabalho", QSpinBox(), 100),
-            "daily_cardio_goal": ("Meta diaria de cardio", QSpinBox(), 100),
-            "daily_mobility_goal": ("Meta diaria de mobilidade", QSpinBox(), 100),
-            "score_threshold_good": ("Limite verde", QSpinBox(), 100),
-            "score_threshold_mid": ("Limite amarelo", QSpinBox(), 100),
-            "weight_water": ("Peso agua", QSpinBox(), 100),
-            "weight_food": ("Peso alimentacao", QSpinBox(), 100),
-            "weight_training": ("Peso treino", QSpinBox(), 100),
-            "weight_english": ("Peso ingles", QSpinBox(), 100),
-            "weight_work": ("Peso trabalho", QSpinBox(), 100),
-            "weight_sleep": ("Peso sono", QSpinBox(), 100),
-            "weight_cardio": ("Peso cardio", QSpinBox(), 100),
-            "weight_mobility": ("Peso mobilidade", QSpinBox(), 100),
+            "financial_goal": ('Financial goal', QDoubleSpinBox(), 1_000_000),
+            "english_goal_minutes": ('English goal (min)', QSpinBox(), 100_000),
+            "daily_water_goal": ('Daily water goal', QSpinBox(), 100),
+            "daily_training_goal": ('Daily training goal', QSpinBox(), 100),
+            "daily_food_goal": ('Daily food goal', QSpinBox(), 100),
+            "daily_sleep_goal": ('Daily sleep goal', QSpinBox(), 100),
+            "daily_work_goal": ('Daily work goal', QSpinBox(), 100),
+            "daily_cardio_goal": ('Daily cardio goal', QSpinBox(), 100),
+            "daily_mobility_goal": ('Daily mobility goal', QSpinBox(), 100),
+            "score_threshold_good": ('Green threshold', QSpinBox(), 100),
+            "score_threshold_mid": ('Yellow threshold', QSpinBox(), 100),
+            "weight_water": ('Water weight', QSpinBox(), 100),
+            "weight_food": ('Food weight', QSpinBox(), 100),
+            "weight_training": ('Training weight', QSpinBox(), 100),
+            "weight_english": ('English weight', QSpinBox(), 100),
+            "weight_work": ('Work weight', QSpinBox(), 100),
+            "weight_sleep": ('Sleep weight', QSpinBox(), 100),
+            "weight_cardio": ('Cardio weight', QSpinBox(), 100),
+            "weight_mobility": ('Mobility weight', QSpinBox(), 100),
         }
         groups = {
-            "Metas principais": [
+            'Main goals': [
                 "financial_goal",
                 "english_goal_minutes",
                 "daily_water_goal",
@@ -78,11 +78,11 @@ class SettingsTab(QWidget):
                 "daily_cardio_goal",
                 "daily_mobility_goal",
             ],
-            "Classificacao diaria": [
+            'Daily rating': [
                 "score_threshold_good",
                 "score_threshold_mid",
             ],
-            "Pesos do score": [
+            'Score weights': [
                 "weight_water",
                 "weight_food",
                 "weight_training",
@@ -109,29 +109,29 @@ class SettingsTab(QWidget):
             layout.addWidget(card)
 
         self.inputs["accent_color"] = QLineEdit()
-        visuals_card = SectionCard("Visual e persistencia")
+        visuals_card = SectionCard('Appearance and persistence')
         form = QFormLayout()
-        form.addRow("Cor de destaque", self.inputs["accent_color"])
+        form.addRow('Accent color', self.inputs["accent_color"])
 
         db_row = QHBoxLayout()
         self.inputs["db_path"] = QLineEdit()
-        browse = QPushButton("Selecionar banco")
+        browse = QPushButton('Select database')
         browse.setProperty("secondary", True)
         browse.clicked.connect(self._choose_db)
         db_row.addWidget(self.inputs["db_path"])
         db_row.addWidget(browse)
-        form.addRow("Caminho do banco", db_row)
+        form.addRow('Database path', db_row)
         visuals_card.layout.addLayout(form)
         layout.addWidget(visuals_card)
 
         actions = QHBoxLayout()
-        reset_button = QPushButton("Restaurar padrao")
+        reset_button = QPushButton('Restore defaults')
         reset_button.setProperty("secondary", True)
         reset_button.clicked.connect(self._restore_defaults)
-        reset_all_button = QPushButton("Reset total")
+        reset_all_button = QPushButton('Reset all')
         reset_all_button.setProperty("danger", True)
         reset_all_button.clicked.connect(self._confirm_reset_all)
-        save_button = QPushButton("Salvar configuracoes")
+        save_button = QPushButton('Save settings')
         save_button.clicked.connect(self._handle_save)
         actions.addWidget(reset_button)
         actions.addWidget(reset_all_button)
@@ -139,7 +139,7 @@ class SettingsTab(QWidget):
         layout.addLayout(actions)
 
     def _choose_db(self) -> None:
-        path, _ = QFileDialog.getSaveFileName(self, "Selecionar banco", "", "SQLite (*.db)")
+        path, _ = QFileDialog.getSaveFileName(self, 'Select database', "", "SQLite (*.db)")
         if path:
             self.inputs["db_path"].setText(path)
 
@@ -163,7 +163,7 @@ class SettingsTab(QWidget):
             else:
                 payload[key] = widget.text().strip()
         self.on_save(payload)
-        QMessageBox.information(self, "Configuracoes", "Configuracoes salvas. Reinicie o app se trocar o banco.")
+        QMessageBox.information(self, 'Settings', 'Settings saved. Restart the app if you changed the database.')
 
     def _restore_defaults(self) -> None:
         self.populate(DEFAULT_SETTINGS, self.inputs["db_path"].text())
@@ -171,8 +171,8 @@ class SettingsTab(QWidget):
     def _confirm_reset_all(self) -> None:
         answer = QMessageBox.warning(
             self,
-            "Reset total",
-            "Isso vai apagar todos os dados locais e fechar o app. Deseja continuar?",
+            'Reset all',
+            'This will delete all local data and close the app. Continue?',
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No,
         )
@@ -194,6 +194,6 @@ class SettingsTab(QWidget):
         good = int(self.inputs["score_threshold_good"].value())
         mid = int(self.inputs["score_threshold_mid"].value())
         self.summary_label.setText(
-            f"Soma dos pesos: {total}. Idealmente fique em 100 para manter o score intuitivo. "
-            f"Faixas atuais: verde >= {good}, amarelo >= {mid}, vermelho abaixo disso."
+            f"Total weight: {total}. Aim for 100 to keep the score intuitive. "
+            f"Current thresholds: green >= {good}, yellow >= {mid}, red below that."
         )

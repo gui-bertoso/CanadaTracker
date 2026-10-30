@@ -18,9 +18,9 @@ class DayTab(QWidget):
         nav = QHBoxLayout()
         nav.setContentsMargins(10, 8, 10, 0)
         nav.setSpacing(8)
-        self.profits_button = QPushButton("lucros")
-        self.english_button = QPushButton("ingles")
-        self.habits_button = QPushButton("dia")
+        self.profits_button = QPushButton('earnings')
+        self.english_button = QPushButton('English')
+        self.habits_button = QPushButton('day')
         for button in (self.profits_button, self.english_button, self.habits_button):
             button.setProperty("secondary", True)
             nav.addWidget(button)

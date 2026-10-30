@@ -20,7 +20,7 @@ class DashboardTab(QWidget):
 
         top_row = QHBoxLayout()
         top_row.setSpacing(10)
-        self.summary_card = SectionCard("resumo geral")
+        self.summary_card = SectionCard('overall summary')
         self.summary_card.setFixedHeight(128)
         self.summary_card.layout.setContentsMargins(16, 12, 16, 12)
         self.summary_card.layout.setSpacing(6)
@@ -34,7 +34,7 @@ class DashboardTab(QWidget):
         self.summary_card.layout.addWidget(self.summary_text)
         top_row.addWidget(self.summary_card, 2)
 
-        self.latest_card = SectionCard("ultimas conquistas")
+        self.latest_card = SectionCard('recent achievements')
         self.latest_card.setFixedHeight(128)
         self.latest_card.layout.setContentsMargins(16, 12, 16, 12)
         self.latest_card.layout.setSpacing(6)
@@ -55,7 +55,7 @@ class DashboardTab(QWidget):
 
         lower_row = QHBoxLayout()
         lower_row.setSpacing(10)
-        self.activity_card = SectionCard("semana atual")
+        self.activity_card = SectionCard('current week')
         self.activity_text = QLabel()
         self.activity_text.setWordWrap(True)
         self.activity_text.setProperty("muted", True)
@@ -64,7 +64,7 @@ class DashboardTab(QWidget):
         self.activity_card.layout.addWidget(self.activity_text)
         lower_row.addWidget(self.activity_card, 1)
 
-        self.goal_card = SectionCard("plataformas")
+        self.goal_card = SectionCard('platforms')
         self.goal_text = QLabel()
         self.goal_text.setWordWrap(True)
         self.goal_text.setProperty("muted", True)
@@ -88,10 +88,10 @@ class DashboardTab(QWidget):
         self.summary_text.setText(
             "\n".join(
                 [
-                    f"feito: ${data['profit_total']:.2f}   |   falta: ${max(float(settings['financial_goal']) - data['profit_total'], 0):.2f}",
-                    f"entradas: {data['profit_entries']}   |   foco acumulado: {data['english_hours']:.1f}h   |   ingles: {data['english_minutes']} min",
-                    f"streak ingles: {data['english_streak']}   |   dias bons: {data['good_day_streak']}   |   media semanal: {data['average_daily_score']:.1f}%",
-                    f"nivel atual: {data['english_hours']:.1f}/{round(int(settings['english_goal_minutes']) / 60, 1)}h",
+                    f"earned: ${data['profit_total']:.2f}   |   remaining: ${max(float(settings['financial_goal']) - data['profit_total'], 0):.2f}",
+                    f"entries: {data['profit_entries']}   |   accumulated focus: {data['english_hours']:.1f}h   |   English: {data['english_minutes']} min",
+                    f"English streak: {data['english_streak']}   |   good days: {data['good_day_streak']}   |   weekly average: {data['average_daily_score']:.1f}%",
+                    f"current level: {data['english_hours']:.1f}/{round(int(settings['english_goal_minutes']) / 60, 1)}h",
                 ]
             )
         )
@@ -101,7 +101,7 @@ class DashboardTab(QWidget):
             reverse=True,
         )[:5]
         if not recent_unlocked:
-            self.latest_text.setText("sem badge ainda , bora farmar.")
+            self.latest_text.setText('no badges yet; time to start farming.')
         else:
             self.latest_text.setText(
                 "\n".join(f"{item['unlocked_at'][:10]}  {item['name']}" for item in recent_unlocked[:3])
@@ -152,16 +152,16 @@ class DashboardTab(QWidget):
                 {"name": "real", "color": "#2de38b", "points": profit_real_points},
                 {"name": "ideal", "color": "#f0d020", "points": profit_ideal_points, "style": "dashed"},
             ],
-            "progresso do dinheiro",
+            'financial progress',
             chart_height,
             max(target_total, max((value for _, value in profit_real_points), default=0.0), 10),
         )
         english_widget = multi_line_chart(
             [
-                {"name": "nivel real", "color": "#59d0ff", "points": english_real_points},
-                {"name": "ritmo meta", "color": "#b97dff", "points": english_ideal_points, "style": "dashed"},
+                {"name": 'actual level', "color": "#59d0ff", "points": english_real_points},
+                {"name": 'goal pace', "color": "#b97dff", "points": english_ideal_points, "style": "dashed"},
             ],
-            "progresso do ingles",
+            'English progress',
             chart_height,
             max(english_target_hours, max((value for _, value in english_real_points), default=0.0), 10),
         )
@@ -171,9 +171,9 @@ class DashboardTab(QWidget):
     def _fill_activity(self, activity: list[dict[str, str]]) -> None:
         rows = activity[:4]
         if not rows:
-            self.activity_text.setText("23/03 ate hoje\n\nnenhuma atividade recente ainda.\ncomece registrando lucros, ingles ou o dia.")
+            self.activity_text.setText("March 23 to today\n\nNo recent activity yet.\nStart by logging profit, English study or your day.")
             return
-        lines = ["23/03 ate hoje", ""]
+        lines = ["March 23 to today", ""]
         for item in rows:
             lines.append(f"{item['date']}  {item['type'].lower()}  {item['detail']}")
         self.activity_text.setText("\n".join(lines))
@@ -182,10 +182,10 @@ class DashboardTab(QWidget):
         self.goal_text.setText(
             "\n".join(
                 [
-                    f"lucros: {data['profit_entries']}",
-                    f"ingles dias: {data['english_days']}",
-                    f"dias verdes: {data['good_days']}",
-                    f"perfeitos: {data['perfect_days']}",
+                    f"earnings: {data['profit_entries']}",
+                    f"English days: {data['english_days']}",
+                    f"green days: {data['good_days']}",
+                    f"perfect days: {data['perfect_days']}",
                 ]
             )
         )
@@ -198,7 +198,7 @@ class DashboardTab(QWidget):
         self.save_text.setText(
             "\n".join(
                 [
-                    "arquivo:",
+                    'file:',
                     compact,
                 ]
             )

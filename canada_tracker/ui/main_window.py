@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         self.app_title = QLabel("canada tracker")
         self.app_title.setProperty("section", True)
         self.app_title.setStyleSheet("font-size: 18px;")
-        self.close_button = QPushButton("fechar")
+        self.close_button = QPushButton('close')
         self.close_button.setProperty("secondary", True)
         self.close_button.clicked.connect(self.close)
         top_bar.addWidget(self.app_title)
@@ -47,14 +47,14 @@ class MainWindow(QMainWindow):
         header_grid = QGridLayout()
         header_grid.setSpacing(8)
         self.header_cards = [
-            HeaderMetricCard("meta usd", "$0"),
-            HeaderMetricCard("feito", "$0"),
-            HeaderMetricCard("falta", "$0"),
-            HeaderMetricCard("meta dia", "$0"),
-            HeaderMetricCard("meta semana", "$0"),
-            HeaderMetricCard("ingles", "0/0"),
+            HeaderMetricCard('USD goal', "$0"),
+            HeaderMetricCard('earned', "$0"),
+            HeaderMetricCard('remaining', "$0"),
+            HeaderMetricCard('daily goal', "$0"),
+            HeaderMetricCard('weekly goal', "$0"),
+            HeaderMetricCard('English', "0/0"),
             HeaderMetricCard("badges", "0/0"),
-            HeaderMetricCard("previsao", "sem ritmo"),
+            HeaderMetricCard('forecast', 'no pace'),
         ]
         for index, card in enumerate(self.header_cards):
             header_grid.addWidget(card, 0, index)
@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
         self.settings_tab = SettingsTab(self._save_settings, self._reset_all_data)
 
         tabs.addTab(self.dashboard_tab, "dashboard")
-        tabs.addTab(self.day_tab, "dia")
+        tabs.addTab(self.day_tab, 'day')
         tabs.addTab(self.achievements_tab, "achievements")
         tabs.addTab(self.settings_tab, "config")
         root_layout.addWidget(tabs)
@@ -96,7 +96,7 @@ class MainWindow(QMainWindow):
         self.settings_tab.populate(self.service.get_settings(), str(self.service.database.db_path))
         self._refresh_header(metrics, achievements)
         self.statusBar().showMessage(
-            f"Banco: {self.service.database.db_path} | Lucros: R$ {metrics['profit_total']:.2f} | Ingles: {metrics['english_hours']:.1f}h | Conquistas: {metrics['unlocked_achievements']}",
+            f"Database: {self.service.database.db_path} | Earnings: R$ {metrics['profit_total']:.2f} | English: {metrics['english_hours']:.1f}h | Achievements: {metrics['unlocked_achievements']}",
             8000,
         )
 
@@ -106,7 +106,7 @@ class MainWindow(QMainWindow):
             self.refresh_all()
             self._notify_unlocks(unlocked)
         except Exception as exc:
-            QMessageBox.critical(self, "Erro", f"Nao foi possivel salvar a entrada.\n{exc}")
+            QMessageBox.critical(self, 'Error', f"Could not save the entry.\n{exc}")
 
     def _save_english(self, minutes: int, study_type: str, session_date: str, note: str) -> None:
         try:
@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
             self.refresh_all()
             self._notify_unlocks(unlocked)
         except Exception as exc:
-            QMessageBox.critical(self, "Erro", f"Nao foi possivel salvar a sessao.\n{exc}")
+            QMessageBox.critical(self, 'Error', f"Could not save the session.\n{exc}")
 
     def _save_habits(self, payload: dict[str, object]) -> None:
         try:
@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
             self.refresh_all()
             self._notify_unlocks(unlocked)
         except Exception as exc:
-            QMessageBox.critical(self, "Erro", f"Nao foi possivel salvar o registro.\n{exc}")
+            QMessageBox.critical(self, 'Error', f"Could not save the log.\n{exc}")
 
     def _load_log_by_date(self, iso_date: str) -> None:
         self.selected_log_date = iso_date
@@ -134,14 +134,14 @@ class MainWindow(QMainWindow):
             db_changed = self.service.save_settings(payload)
             self.refresh_all()
             if db_changed:
-                self.statusBar().showMessage("Caminho do banco atualizado. Reinicie o app para usar o novo arquivo.", 10000)
+                self.statusBar().showMessage('Database path updated. Restart the app to use the new file.', 10000)
         except Exception as exc:
-            QMessageBox.critical(self, "Erro", f"Nao foi possivel salvar as configuracoes.\n{exc}")
+            QMessageBox.critical(self, 'Error', f"Could not save settings.\n{exc}")
 
     def _notify_unlocks(self, unlocked_ids: list[str]) -> None:
         if not unlocked_ids:
             return
-        self.statusBar().showMessage(f"{len(unlocked_ids)} nova(s) conquista(s) desbloqueada(s).", 10000)
+        self.statusBar().showMessage(f"{len(unlocked_ids)} new achievement(s) unlocked.", 10000)
 
     def _reset_all_data(self) -> None:
         db_path = Path(str(self.service.database.db_path))
@@ -153,12 +153,12 @@ class MainWindow(QMainWindow):
             save_runtime_config(DEFAULT_RUNTIME_CONFIG)
             QMessageBox.information(
                 self,
-                "Reset concluido",
-                "Todos os dados locais foram apagados. O app sera fechado agora.",
+                'Reset complete',
+                'All local data was deleted. The app will now close.',
             )
             self.close()
         except Exception as exc:
-            QMessageBox.critical(self, "Erro", f"Nao foi possivel resetar os dados.\n{exc}")
+            QMessageBox.critical(self, 'Error', f"Could not reset data.\n{exc}")
 
     def _refresh_header(self, metrics: dict[str, object], achievements: list[dict[str, object]]) -> None:
         settings = metrics["settings"]
@@ -175,17 +175,17 @@ class MainWindow(QMainWindow):
         for item in metrics["recent_profits"]:
             if item["entry_date"] >= (__import__("datetime").date.today() - __import__("datetime").timedelta(days=6)).isoformat():
                 weekly_profit += float(item["amount"])
-        forecast = "sem ritmo"
+        forecast = 'no pace'
         if weekly_profit > 0:
             weeks_needed = remaining / weekly_profit
-            forecast = f"{weeks_needed:.1f} sem"
-        self.header_cards[0].update_content("meta usd", f"${goal:,.0f}")
-        self.header_cards[1].update_content("feito", f"${done:,.0f}")
-        self.header_cards[2].update_content("falta", f"${remaining:,.0f}")
-        self.header_cards[3].update_content("meta dia", f"${day_goal:,.0f}")
-        self.header_cards[4].update_content("meta semana", f"${week_goal:,.0f}")
-        self.header_cards[5].update_content("ingles", f"{english_now}/{english_goal}")
+            forecast = f"{weeks_needed:.1f} weeks"
+        self.header_cards[0].update_content('USD goal', f"${goal:,.0f}")
+        self.header_cards[1].update_content('earned', f"${done:,.0f}")
+        self.header_cards[2].update_content('remaining', f"${remaining:,.0f}")
+        self.header_cards[3].update_content('daily goal', f"${day_goal:,.0f}")
+        self.header_cards[4].update_content('weekly goal', f"${week_goal:,.0f}")
+        self.header_cards[5].update_content('English', f"{english_now}/{english_goal}")
         self.header_cards[6].update_content("badges", f"{unlocked}/{total_achievements}")
-        self.header_cards[7].update_content("previsao", forecast)
+        self.header_cards[7].update_content('forecast', forecast)
         self.global_progress.setValue(min(100, int(metrics["goal_progress"])))
         self.global_progress.setFormat(f"{metrics['goal_progress']:.1f}%")
