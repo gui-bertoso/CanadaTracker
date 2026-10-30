@@ -41,3 +41,7 @@ Desativar:
 ```bash
 rm -f ~/.config/autostart/canada-tracker.desktop
 ```
+
+## License
+
+The author's code uses the [MIT License](LICENSE). Third-party materials retain their original licenses.
